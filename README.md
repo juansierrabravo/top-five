@@ -12,7 +12,7 @@
   - [Create a Virtual Environment](#create-a-virtual-environment)
   - [Install Dependencies](#install-dependencies)
 - [Running the Project](#running-the-project)
-  - [Set environment variables. TODO: add env variables details.](#set-environment-variables-todo-add-env-variables-details)
+  - [Set environment variables](#set-environment-variables)
   - [Apply Migrations](#apply-migrations)
   - [Create a Superuser](#create-a-superuser)
   - [Run the Development Server](#run-the-development-server)
@@ -57,58 +57,66 @@ This is a Django project configured to use PostgreSQL as the database. The proje
 - Content validation before publication
 - Social sharing options for tops
 - Real-time notifications for likes, comments, new followers, etc.
+- Celery and Rabbitmq queue
 
 ## Requirements
 The project is being developed with the following software versions:
 - Python 3.12
-- PostgreSQL 14
+- PostgreSQL 16
 
 ## Installation
 ### Clone the Repository
 ```bash
-git clone https://github.com/juansierrabravo/top-five.git
-cd top-five
+$ git clone https://github.com/juansierrabravo/top-five.git
+$ cd top-five
 ```
 
 ### Create a Virtual Environment
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+$ python -m venv venv
+$ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
 ### Install Dependencies
 ```bash
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## Running the Project
-### Set environment variables. TODO: add env variables details.
+### Set environment variables
 ```bash
-API_KEY...
+$ echo """
+SECRET_KEY="YOUR_SECRET_KEY"
+""">./.env
+```
+**Note:** to generate a secret key, use the following Python script:
+```python
+from django.core.management.utils import get_random_secret_key
+print(get_random_secret_key())
 ```
 
 ### Apply Migrations
-Install PostgreSQL. TODO: add installation details.
+Install [PostgreSQL](https://www.postgresql.org/download/) following the instructions for the specific operating system.
 
 ```bash
-python manage.py migrate
+$ python manage.py migrate
 ```
 
 ### Create a Superuser
 ```bash
-python manage.py createsuperuser
+$ python manage.py createsuperuser
 ```
 
 ### Run the Development Server
 ```bash
-python manage.py runserver
+$ python manage.py runserver
 ```
 
 Access the project at `http://127.0.0.1:8000/`.
 
 ## Testing
-Install Firefox Geckodriver. TODO: add installation details.
+Install [Geckodriver](https://github.com/mozilla/geckodriver) to allow Selenium to inteact with the Firefox web browser (this is for the functional tests).
 
 ```bash
-python manage.py test
+$ python manage.py test
 ```
