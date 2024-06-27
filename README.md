@@ -3,8 +3,7 @@
 - [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Features](#features)
-  - [Basic Features](#basic-features)
-  - [Detailed Features](#detailed-features)
+  - [Core Offerings:](#core-offerings)
   - [Future Enhancements](#future-enhancements)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -20,43 +19,24 @@
 - [Using the Makefile](#using-the-makefile)
 
 ## Introduction
-This is a Django project configured to use PostgreSQL as the database. The project is being developed for learning purposes, initially focusing on practicing Test-Driven Development (TDD). It includes comprehensive user management and interactive features for creating and managing user-generated content, such as top lists. Users can register, log in, create, edit, and delete top lists, and interact with others' content through likes and dislikes. The home page showcases the most popular tops. Future enhancements will include practicing SOLID principles, integrating Docker, implementing design patterns, and other advanced software development techniques to improve functionality and user engagement.
+Welcome to this innovative Django project, crafted specifically to sharpen and showcase a myriad of software development skills to potential employers and collaborators. This project serves as a dynamic playground for mastering Test-Driven Development (TDD) and will evolve to encapsulate a broader spectrum of advanced programming concepts. At its core, the application boasts a sophisticated user management system paired with interactive functionalities that allow users to create, modify, and engage with top lists. From registering and logging in to voting on content with likes and dislikes, the platform is designed to highlight popular user-generated content right on the homepage. As the project progresses, expect to see the integration of SOLID principles, Docker, and various design patterns, enhancing both functionality and user interaction. This ongoing enhancement aims to not only demonstrate technical proficiency but also a commitment to continuous learning and improvement in software development.
 
 ## Features
-### Basic Features
-- **User Authentication and Authorization:** Registration, login, and logout functionalities.
-- **Home Page:** Displays the most relevant tops based on likes.
-- **User-Generated Content:** Users can create, edit, delete, and view their top lists.
-- **Like System:** Users can like or dislike tops, and the most liked tops are prominently displayed.
-
-### Detailed Features
-- **User Registration:** Users can register with a username and password.
-- **Login and Logout:** Users can log in and log out securely.
-- **Top Creation:** Users can create up to five top lists, each containing:
-  - Name
-  - Optional description
-  - List of elements with names, images, and optional descriptions
-  - Predefined tags
-  - Publication date
-- **Top Management:** Users can view, edit, and delete their tops, with verification prompts for deletions.
-- **Home Page:** Displays popular tops by day, week, and month, with filter options for name and tag.
-- **Top Details:** Viewing a top shows the user who posted it, the publication date, title, description, and elements ranked from 5 to 1.
-- **Like System:** Users can like or dislike tops, but not both simultaneously, and only once per top.
+### Core Offerings:
+- **User Authentication:** Seamless registration, login, and logout experiences.
+- **Dynamic Home Page:** Displays popular tops by day, week, and month, with filter options for name and tag.
+- **User-Generated Content:** Your stage to create, modify, and showcase top lists that capture your unique perspective.
+- **Engagement Tools:** Thrive in our community with a robust like and dislike system to express your opinions and influence trends.
 
 ### Future Enhancements
-- Adding cover images to tops
-- Commenting on tops
-- Viewing a specific user's tops
-- Creating collections of tops
-- User profile management (editing profile, uploading photos, etc.)
-- Subscription system to follow users and receive notifications
-- Social login (Google, Facebook)
-- Gamification with points and badges
-- Moderation and reporting system
-- Content validation before publication
-- Social sharing options for tops
-- Real-time notifications for likes, comments, new followers, etc.
-- Celery and Rabbitmq queue
+- **Interactive Comments:** Discuss and connect directly on top list pages.
+- **Personalized Collections:** Create and manage collections of your favorite tops.
+- **Enhanced Profiles:** More tools to personalize your profile and manage your presence.
+- **Engagement Beyond the Platform:** From social logins to sharing on networks, we’re expanding ways you can connect and share.
+- **Gamify Your Experience:** Earn points, unlock badges, and climb the leaderboard!
+- **Moderation and Reporting:** Ensuring a safe and respectful community with tools for moderation and reporting.
+- **Social Sharing:** Share your top lists easily across social media platforms.
+- **Real-Time Notifications:** Stay updated with instant notifications for likes, comments, new followers, and more.
 
 ## Requirements
 The project is being developed with the following software versions:
