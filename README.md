@@ -17,6 +17,7 @@
   - [Create a Superuser](#create-a-superuser)
   - [Run the Development Server](#run-the-development-server)
 - [Testing](#testing)
+- [Using the Makefile](#using-the-makefile)
 
 ## Introduction
 This is a Django project configured to use PostgreSQL as the database. The project is being developed for learning purposes, initially focusing on practicing Test-Driven Development (TDD). It includes comprehensive user management and interactive features for creating and managing user-generated content, such as top lists. Users can register, log in, create, edit, and delete top lists, and interact with others' content through likes and dislikes. The home page showcases the most popular tops. Future enhancements will include practicing SOLID principles, integrating Docker, implementing design patterns, and other advanced software development techniques to improve functionality and user engagement.
@@ -119,4 +120,45 @@ Install [Geckodriver](https://github.com/mozilla/geckodriver) to allow Selenium 
 
 ```bash
 $ python manage.py test
+```
+
+## Using the Makefile
+
+The project includes a Makefile to simplify common development tasks. Here are the available commands:
+
+- **black**: Formats the code using `black`.
+```bash
+$ make black
+```
+- **createsuperuser:** Creates a new superuser for the Django admin.
+```bash
+$ make createsuperuser
+```
+- **pip_freeze:** Outputs the current environment's installed packages.
+```bash
+$ make pip_freeze
+```
+- **makemigrations:** Creates new migrations based on the changes detected in your models.
+```bash
+$ make makemigrations
+```
+- **migrate:** Applies the migrations to the database.
+```bash
+$ make migrate
+```
+- **runserver:** Starts the Django development server.
+```bash
+$ make runserver
+```
+- **shell:** Opens the Django shell.
+```bash
+$ make shell
+```
+- **test:** Runs the tests for the Django project.
+```bash
+$ make test
+```
+- **pip:** Installs a Python package using pip.
+```bash
+$ make make library=<library-name> pip
 ```
