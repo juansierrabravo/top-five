@@ -22,8 +22,6 @@
 ## Introduction
 This is a Django project configured to use PostgreSQL as the database. The project is being developed for learning purposes, initially focusing on practicing Test-Driven Development (TDD). It includes comprehensive user management and interactive features for creating and managing user-generated content, such as top lists. Users can register, log in, create, edit, and delete top lists, and interact with others' content through likes and dislikes. The home page showcases the most popular tops. Future enhancements will include practicing SOLID principles, integrating Docker, implementing design patterns, and other advanced software development techniques to improve functionality and user engagement.
 
-
-
 ## Features
 ### Basic Features
 - **User Authentication and Authorization:** Registration, login, and logout functionalities.
@@ -86,9 +84,7 @@ $ pip install -r requirements.txt
 ## Running the Project
 ### Set environment variables
 ```bash
-$ echo """
-SECRET_KEY="YOUR_SECRET_KEY"
-""">./.env
+$ cp .env.example .env # Then, open the .env file and change the placeholder <CHANGE-ME> for the real values
 ```
 **Note:** to generate a secret key, use the following Python script:
 ```python
