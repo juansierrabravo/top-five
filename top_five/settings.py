@@ -33,7 +33,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-CUSTOM_APPS = []
+CUSTOM_APPS = [
+    "apps.users",
+]
 
 THIRD_APPS = []
 
@@ -44,7 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-]
+] + THIRD_APPS + CUSTOM_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
