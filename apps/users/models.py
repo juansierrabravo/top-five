@@ -47,3 +47,9 @@ class CustomUser(AbstractBaseUser):
     )
 
     objects = CustomUserManager()
+
+    USERNAME_FIELD = "username"
+
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        super().save(*args, **kwargs)

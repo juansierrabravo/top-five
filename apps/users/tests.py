@@ -1,20 +1,14 @@
 from django.test import TestCase
 from django.db import IntegrityError
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.hashers import is_password_usable
+from django.db.utils import DataError
+from django.contrib.auth import get_user_model
 
-from apps.users.models import CustomUser, CustomUserManager
+from apps.users.models import CustomUser
 
 
 class UserModelTest(TestCase):
 
-    def test_user_model_inherit_abstractbaseuser(self):
-        self.assertTrue(issubclass(CustomUser, AbstractBaseUser))
-
-    def test_user_model_manager_inherit_baseusermanager(self):
-        self.assertTrue(issubclass(CustomUserManager, BaseUserManager))
-
-    def test_create_new_user(self):
+    def test_create_user(self):
         user = CustomUser.objects.create_user(
             username="myusername",
             password="secure-password",
@@ -29,7 +23,7 @@ class UserModelTest(TestCase):
         self.assertTrue(saved_user.is_active)
         self.assertFalse(saved_user.is_staff)
 
-    def test_create_new_superuser(self):
+    def test_create_superuser(self):
         superuser = CustomUser.objects.create_superuser(
             username="mysuperusername",
             password="secure-superpassword",
@@ -44,7 +38,7 @@ class UserModelTest(TestCase):
         self.assertTrue(saved_superuser.is_active)
         self.assertTrue(saved_superuser.is_staff)
 
-    def test_create_new_user_repeated_username(self):
+    def test_user_unique_username(self):
         first_user = CustomUser.objects.create_user(
             username="firstuser",
             password="secure-password",
@@ -56,18 +50,12 @@ class UserModelTest(TestCase):
                 password="secure-password",
             )
 
-    def test_create_new_user_missing_parameters(self):
+    def test_create_user_no_username(self):
         with self.assertRaises(TypeError):
             missing_username_user = CustomUser.objects.create_user(
                 password="secure-password",
             )
 
-        with self.assertRaises(TypeError):
-            missing_password_user = CustomUser.objects.create_user(
-                username="missingpasswordusername",
-            )
-
-    def test_create_new_user_empty_parameters(self):
         with self.assertRaises(ValueError):
             empty_username_user = CustomUser.objects.create_user(
                 username="",
@@ -75,35 +63,48 @@ class UserModelTest(TestCase):
             )
 
         with self.assertRaises(ValueError):
-            empty_password_user = CustomUser.objects.create_user(
-                username="emptypasswordusername",
-                password="",
-            )
-
-    def test_create_new_user_with_none_values(self):
-        with self.assertRaises(ValueError):
             none_username_user = CustomUser.objects.create_user(
                 username=None,
                 password="secure-password",
             )
 
+    def test_create_user_no_password(self):
+        with self.assertRaises(TypeError):
+            missing_password_user = CustomUser.objects.create_user(
+                username="myusername",
+            )
+
+        with self.assertRaises(ValueError):
+            empty_password_user = CustomUser.objects.create_user(
+                username="myusername",
+                password="",
+            )
+
         with self.assertRaises(ValueError):
             none_password_user = CustomUser.objects.create_user(
-                username="emptypasswordusername",
+                username="myusername",
                 password=None,
             )
 
-    def test_auth_user_model_equals_custom_user_model(self):
-        pass
-
-    def test_username_parses_to_lowercase(self):
-        pass
+    def test_username_saved_in_lowercase(self):
+        user = CustomUser.objects.create_user(
+            username="MyUsername",
+            password="secure-password",
+        )
+        self.assertEqual(user.username, "myusername")
 
     def test_username_max_length(self):
-        pass
+        username = "u" * 50
+        first_user = CustomUser.objects.create_user(
+            username=username,
+            password="secure-password",
+        )
 
-    def test_password_max_length(self):
-        pass
+        with self.assertRaises(DataError):
+            second_user = CustomUser.objects.create_user(
+                username=username + "u",
+                password="secure-password",
+            )
 
-    def test_model_configurations(self):
-        pass
+    def test_username_field(self):
+        self.assertEqual(CustomUser.USERNAME_FIELD, "username")
