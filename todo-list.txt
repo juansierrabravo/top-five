@@ -1,0 +1,3 @@
+- [Study] Check how the is_active field work
+- [Study] Learn about gettext_lazy translations
+- [Improve] Enhance the readme introduction
