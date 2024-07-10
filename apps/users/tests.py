@@ -1,12 +1,16 @@
-from django.test import TestCase
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.utils import DataError
-from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 from apps.users.models import CustomUser
 
 
 class UserModelTest(TestCase):
+
+    def test_settings_auth_user_model(self):
+        self.assertEqual(CustomUser, get_user_model())
 
     def test_create_user(self):
         user = CustomUser.objects.create_user(
@@ -111,5 +115,21 @@ class UserModelTest(TestCase):
     def test_username_field(self):
         self.assertEqual(CustomUser.USERNAME_FIELD, "username")
 
-    def test_auth_user_model_equals_custom_user_model(self):
-        self.assertEqual(CustomUser, get_user_model())
+    def test_username_only_allows_alphanumeric_characters(self):
+        with self.assertRaises(ValidationError):
+            user = CustomUser.objects.create_user(
+                username="my username",
+                password="secure-password",
+            ).full_clean()
+
+        with self.assertRaises(ValidationError):
+            user = CustomUser.objects.create_user(
+                username="my-username",
+                password="secure-password",
+            ).full_clean()
+
+        with self.assertRaises(ValidationError):
+            user = CustomUser.objects.create_user(
+                username="my@username",
+                password="secure-password",
+            ).full_clean()

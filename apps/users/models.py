@@ -1,5 +1,10 @@
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
+from django.core.validators import RegexValidator
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
 
@@ -29,6 +34,10 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 
+    alphanumeric_validator = RegexValidator(
+        r"^[0-9a-zA-Z]*$", "Only alphanumeric characters are allowed."
+    )
+
     username = models.CharField(
         _("username"),
         max_length=50,
@@ -36,6 +45,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         help_text=_(
             "Required. 50 characters or fewer. Lowercase letters and digits only."
         ),
+        validators=[alphanumeric_validator],
         error_messages={
             "unique": _("A user with that username already exists."),
         },
