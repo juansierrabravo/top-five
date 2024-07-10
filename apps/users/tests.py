@@ -22,6 +22,7 @@ class UserModelTest(TestCase):
         self.assertTrue(saved_user.check_password("secure-password"))
         self.assertTrue(saved_user.is_active)
         self.assertFalse(saved_user.is_staff)
+        self.assertFalse(saved_user.is_superuser)
 
     def test_create_superuser(self):
         superuser = CustomUser.objects.create_superuser(
@@ -37,6 +38,7 @@ class UserModelTest(TestCase):
         self.assertTrue(saved_superuser.check_password("secure-superpassword"))
         self.assertTrue(saved_superuser.is_active)
         self.assertTrue(saved_superuser.is_staff)
+        self.assertTrue(saved_superuser.is_superuser)
 
     def test_user_unique_username(self):
         first_user = CustomUser.objects.create_user(
@@ -108,3 +110,6 @@ class UserModelTest(TestCase):
 
     def test_username_field(self):
         self.assertEqual(CustomUser.USERNAME_FIELD, "username")
+
+    def test_auth_user_model_equals_custom_user_model(self):
+        self.assertEqual(CustomUser, get_user_model())

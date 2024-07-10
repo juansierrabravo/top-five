@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 
 
@@ -23,10 +23,11 @@ class CustomUserManager(BaseUserManager):
         """Creates and saves a superuser with the given
         username and password."""
         other_fields.setdefault("is_staff", True)
+        other_fields.setdefault("is_superuser", True)
         return self.create_user(username, password, **other_fields)
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(
         _("username"),
@@ -51,5 +52,6 @@ class CustomUser(AbstractBaseUser):
     USERNAME_FIELD = "username"
 
     def save(self, *args, **kwargs):
+        # Parse the username to lowercase before saving the record
         self.username = self.username.lower()
         super().save(*args, **kwargs)
