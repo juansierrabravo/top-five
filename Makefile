@@ -1,26 +1,29 @@
 black:
-	python3 -m black .
+	./venv/bin/python -m black .
 
 createsuperuser:
-	python3 manage.py createsuperuser
+	./venv/bin/python manage.py createsuperuser
 
 pip_freeze:
-	python3 -m pip freeze
+	./venv/bin/python -m pip freeze
 
 makemigrations:
-	python3 manage.py makemigrations
+	./venv/bin/python manage.py makemigrations
 
 migrate:
-	python3 manage.py migrate
+	./venv/bin/python manage.py migrate
 
 runserver:
-	python3 manage.py runserver
+	./venv/bin/python manage.py runserver
 
 shell:
-	python3 manage.py shell
+	./venv/bin/python manage.py shell
 
 test:
-	python3 manage.py test
+	./venv/bin/python manage.py test
 
 pip:
-	python3 -m pip install $(library)
+	./venv/bin/python -m pip install $(library)
+
+startapp:
+	./venv/bin/python manage.py startapp $(name) $(path)

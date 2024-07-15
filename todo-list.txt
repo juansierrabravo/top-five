@@ -1,0 +1,4 @@
+- [Study] Check how the is_active field work
+- [Study] Learn about gettext_lazy translations
+- [Improve] Enhance the readme introduction
+- [Test] Basic model methods like __str__, reset password, update user details, etc.
