@@ -9,33 +9,46 @@ from apps.users.models import CustomUser
 
 class UserModelTest(TestCase):
 
-    def test_settings_auth_user_model(self):
-        self.assertEqual(CustomUser, get_user_model())
-
-    def test_create_user(self):
-        user = CustomUser.objects.create_user(
+    def setUp(self):
+        self.test_user = CustomUser.objects.create_user(
             username="myusername",
             password="secure-password",
         )
+
+    def test_custom_user_model_is_set_as_project_user_model(self):
+        """Confirm that the CustomUser model is set as the project's
+        user model."""
+        self.assertEqual(CustomUser, get_user_model())
+
+    def test_custom_user_model_username_field(self):
+        """Confirm that the USERNAME_FIELD in the CustomUser model is set to
+        'username'."""
+        self.assertEqual(CustomUser.USERNAME_FIELD, "username")
+
+    def test_create_user_with_valid_credentials(self):
+        """Test the creation of a standard user with valid username
+        and password to ensure proper storage and attribute settings."""
         self.assertEqual(CustomUser.objects.count(), 1)
 
         saved_user = CustomUser.objects.first()
 
-        self.assertEqual(saved_user, user)
+        self.assertEqual(saved_user, self.test_user)
         self.assertEqual(saved_user.username, "myusername")
         self.assertTrue(saved_user.check_password("secure-password"))
         self.assertTrue(saved_user.is_active)
         self.assertFalse(saved_user.is_staff)
         self.assertFalse(saved_user.is_superuser)
 
-    def test_create_superuser(self):
+    def test_create_superuser_with_valid_credentials(self):
+        """Test the creation of a standard superuser with valid username
+        and password to ensure proper storage and attribute settings."""
         superuser = CustomUser.objects.create_superuser(
             username="mysuperusername",
             password="secure-superpassword",
         )
-        self.assertEqual(CustomUser.objects.count(), 1)
+        self.assertEqual(CustomUser.objects.count(), 2)
 
-        saved_superuser = CustomUser.objects.first()
+        saved_superuser = CustomUser.objects.last()
 
         self.assertEqual(saved_superuser, superuser)
         self.assertEqual(saved_superuser.username, "mysuperusername")
@@ -44,92 +57,122 @@ class UserModelTest(TestCase):
         self.assertTrue(saved_superuser.is_staff)
         self.assertTrue(saved_superuser.is_superuser)
 
-    def test_user_unique_username(self):
-        first_user = CustomUser.objects.create_user(
-            username="firstuser",
-            password="secure-password",
-        )
-
+    def test_username_must_be_unique(self):
+        """Ensure that the username field is unique across users by expecting
+        an IntegrityError when attempting to create a user with a duplicate
+        username."""
         with self.assertRaises(IntegrityError):
-            second_user = CustomUser.objects.create_user(
-                username="firstuser",
+            user = CustomUser.objects.create_user(
+                username="myusername",
                 password="secure-password",
             )
 
-    def test_create_user_no_username(self):
-        with self.assertRaises(TypeError):
+    def test_create_user_without_username_raises_error(self):
+        """Test that creating a user without specifying a username results
+        in appropriate exceptions being raised for missing, empty, or null
+        usernames."""
+        NO_USERNAME_ERROR_MESSAGE = "The field 'username' must be specified."
+
+        with self.assertRaises(TypeError) as error:
             missing_username_user = CustomUser.objects.create_user(
                 password="secure-password",
             )
+        self.assertIn("missing 1 required positional argument", str(error.exception))
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesMessage(ValueError, NO_USERNAME_ERROR_MESSAGE):
             empty_username_user = CustomUser.objects.create_user(
                 username="",
                 password="secure-password",
             )
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesMessage(ValueError, NO_USERNAME_ERROR_MESSAGE):
             none_username_user = CustomUser.objects.create_user(
                 username=None,
                 password="secure-password",
             )
 
-    def test_create_user_no_password(self):
-        with self.assertRaises(TypeError):
-            missing_password_user = CustomUser.objects.create_user(
-                username="myusername",
-            )
+    def test_create_user_without_password_raises_error(self):
+        """Test that creating a user without specifying a password results
+        in appropriate exceptions being raised for missing, empty, or null
+        passwords."""
+        NO_PASSWORD_ERROR_MESSAGE = "The field 'password' must be specified."
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError) as error:
+            missing_password_user = CustomUser.objects.create_user(
+                username="johndoe",
+            )
+        self.assertIn("missing 1 required positional argument", str(error.exception))
+
+        with self.assertRaisesMessage(ValueError, NO_PASSWORD_ERROR_MESSAGE):
             empty_password_user = CustomUser.objects.create_user(
-                username="myusername",
+                username="johndoe",
                 password="",
             )
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesMessage(ValueError, NO_PASSWORD_ERROR_MESSAGE):
             none_password_user = CustomUser.objects.create_user(
-                username="myusername",
+                username="johndoe",
                 password=None,
             )
 
-    def test_username_saved_in_lowercase(self):
+    def test_username_is_saved_as_lowercase(self):
+        """Ensure that all usernames are saved in lowercase regardless
+        of the case of the input provided."""
         user = CustomUser.objects.create_user(
-            username="MyUsername",
+            username="JohnDoe",
             password="secure-password",
         )
-        self.assertEqual(user.username, "myusername")
+        self.assertEqual(user.username, "johndoe")
 
-    def test_username_max_length(self):
-        username = "u" * 50
+    def test_username_exceeding_max_length_raises_error(self):
+        """Check that trying to create a username longer than the maximum allowed
+        length results in a DataError."""
+        USERNAME_MAX_LENGTH = CustomUser._meta.get_field('username').max_length
+        username_at_max = "u" * USERNAME_MAX_LENGTH
+        username_beyond_max = "u" * (USERNAME_MAX_LENGTH + 1)
+
+        # Create an user with the username length limit
         first_user = CustomUser.objects.create_user(
-            username=username,
+            username=username_at_max,
             password="secure-password",
         )
 
+        # Create an user with the username length limit plus 1 character
         with self.assertRaises(DataError):
             second_user = CustomUser.objects.create_user(
-                username=username + "u",
+                username=username_beyond_max,
                 password="secure-password",
             )
 
-    def test_username_field(self):
-        self.assertEqual(CustomUser.USERNAME_FIELD, "username")
+    def test_username_rejects_spaces(self):
+        """Ensure that ValidationError is raised if the username contains
+        spaces."""
 
-    def test_username_only_allows_alphanumeric_characters(self):
-        with self.assertRaises(ValidationError):
-            user = CustomUser.objects.create_user(
-                username="my username",
-                password="secure-password",
+        NON_ALPHANUMERIC_CHARACTERS_ERROR_MESSAGE = (
+            "Only alphanumeric characters are allowed."
+        )
+
+        with self.assertRaisesMessage(
+            ValidationError, NON_ALPHANUMERIC_CHARACTERS_ERROR_MESSAGE
+        ):
+            CustomUser.objects.create_user(
+                username="my username", password="secure-password"
             ).full_clean()
 
-        with self.assertRaises(ValidationError):
-            user = CustomUser.objects.create_user(
-                username="my-username",
-                password="secure-password",
-            ).full_clean()
+    def test_username_rejects_special_characters(self):
+        """Ensure that ValidationError is raised if the username contains
+        special characters like '@', '-', etc."""
 
-        with self.assertRaises(ValidationError):
-            user = CustomUser.objects.create_user(
-                username="my@username",
-                password="secure-password",
-            ).full_clean()
+        NON_ALPHANUMERIC_CHARACTERS_ERROR_MESSAGE = (
+            "Only alphanumeric characters are allowed."
+        )
+
+        # Make the same test with different special characters
+        special_chars = ["@", "-", "#", "!", "*"]
+        for char in special_chars:
+            with self.assertRaisesMessage(
+                ValidationError, NON_ALPHANUMERIC_CHARACTERS_ERROR_MESSAGE
+            ):
+                CustomUser.objects.create_user(
+                    username=f"my{char}username", password="secure-password"
+                ).full_clean()
