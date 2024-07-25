@@ -5,9 +5,10 @@ from django.db.utils import DataError
 from django.test import TestCase
 
 from apps.users.models import CustomUser
+from apps.users.forms import CustomAuthenticationForm
 
 
-class UserModelTest(TestCase):
+class CustomUserUserModelTest(TestCase):
 
     def setUp(self):
         self.test_user = CustomUser.objects.create_user(
@@ -127,7 +128,7 @@ class UserModelTest(TestCase):
     def test_username_exceeding_max_length_raises_error(self):
         """Check that trying to create a username longer than the maximum allowed
         length results in a DataError."""
-        USERNAME_MAX_LENGTH = CustomUser._meta.get_field('username').max_length
+        USERNAME_MAX_LENGTH = CustomUser._meta.get_field("username").max_length
         username_at_max = "u" * USERNAME_MAX_LENGTH
         username_beyond_max = "u" * (USERNAME_MAX_LENGTH + 1)
 
@@ -176,3 +177,79 @@ class UserModelTest(TestCase):
                 CustomUser.objects.create_user(
                     username=f"my{char}username", password="secure-password"
                 ).full_clean()
+
+
+class CustomAuthenticationFormTest(TestCase):
+
+    def setUp(self):
+        self.test_user = CustomUser.objects.create_user(
+            username="myusername",
+            password="secure-password",
+        )
+
+    def validate_missing_required_field_in_form(self, field_name, form):
+        self.assertIn(field_name, form.errors)
+        self.assertIn("This field is required.", form.errors[field_name])
+
+    def test_authentication_form_valid(self):
+        """Test form is valid when the user types valid credentials."""
+        form_data = {
+            "username": "myusername",
+            "password": "secure-password",
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_authentication_form_fails_with_invalid_credentials(self):
+        """Test form is not valid when the credentials are not valid."""
+        form_data = {
+            "username": "myusername",
+            "password": "wrong-password",
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("__all__", form.errors)
+        self.assertIn(
+            "Please enter a correct username and password. Note that both fields may be case-sensitive.",
+            form.errors["__all__"],
+        )
+
+    def test_authentication_form_fails_with_empty_username(self):
+        """Test form is not valid when the field 'username' is empty."""
+        form_data = {
+            "username": "",
+            "password": "secure-password",
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.validate_missing_required_field_in_form("username", form)
+
+    def test_authentication_form_fails_with_null_username(self):
+        """Test form is not valid when the field 'username' is null."""
+        form_data = {
+            "username": None,
+            "password": "secure-password",
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.validate_missing_required_field_in_form("username", form)
+
+    def test_authentication_form_fails_with_empty_password(self):
+        """Test form is not valid when the field 'password' is empty."""
+        form_data = {
+            "username": "myusername",
+            "password": "",
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.validate_missing_required_field_in_form("password", form)
+
+    def test_authentication_form_fails_with_null_password(self):
+        """Test form is not valid when the field 'password' is null."""
+        form_data = {
+            "username": "myusername",
+            "password": None,
+        }
+        form = CustomAuthenticationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.validate_missing_required_field_in_form("password", form)
