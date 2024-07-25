@@ -191,22 +191,22 @@ class CustomAuthenticationFormTest(TestCase):
         self.assertIn(field_name, form.errors)
         self.assertIn("This field is required.", form.errors[field_name])
 
+    def get_form(self, username, password):
+        form_data = {
+            "username": username,
+            "password": password,
+        }
+        return CustomAuthenticationForm(data=form_data)
+
     def test_authentication_form_valid(self):
         """Test form is valid when the user types valid credentials."""
-        form_data = {
-            "username": "myusername",
-            "password": "secure-password",
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form("myusername", "secure-password")
         self.assertTrue(form.is_valid())
+        self.assertFalse(form.errors) # Check if the set of errors is empty
 
     def test_authentication_form_fails_with_invalid_credentials(self):
         """Test form is not valid when the credentials are not valid."""
-        form_data = {
-            "username": "myusername",
-            "password": "wrong-password",
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form("myusername", "wrong-password")
         self.assertFalse(form.is_valid())
         self.assertIn("__all__", form.errors)
         self.assertIn(
@@ -216,40 +216,24 @@ class CustomAuthenticationFormTest(TestCase):
 
     def test_authentication_form_fails_with_empty_username(self):
         """Test form is not valid when the field 'username' is empty."""
-        form_data = {
-            "username": "",
-            "password": "secure-password",
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form("", "secure-password")
         self.assertFalse(form.is_valid())
         self.validate_missing_required_field_in_form("username", form)
 
     def test_authentication_form_fails_with_null_username(self):
         """Test form is not valid when the field 'username' is null."""
-        form_data = {
-            "username": None,
-            "password": "secure-password",
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form(None, "secure-password")
         self.assertFalse(form.is_valid())
         self.validate_missing_required_field_in_form("username", form)
 
     def test_authentication_form_fails_with_empty_password(self):
         """Test form is not valid when the field 'password' is empty."""
-        form_data = {
-            "username": "myusername",
-            "password": "",
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form("myusername", "")
         self.assertFalse(form.is_valid())
         self.validate_missing_required_field_in_form("password", form)
 
     def test_authentication_form_fails_with_null_password(self):
         """Test form is not valid when the field 'password' is null."""
-        form_data = {
-            "username": "myusername",
-            "password": None,
-        }
-        form = CustomAuthenticationForm(data=form_data)
+        form = self.get_form("myusername", None)
         self.assertFalse(form.is_valid())
         self.validate_missing_required_field_in_form("password", form)

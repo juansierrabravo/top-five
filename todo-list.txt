@@ -4,9 +4,9 @@
 - [Improve] Enhance the readme introduction
 - [Test] Basic model methods like __str__
 - [Test] Base user model methods like reset password, update user details, etc.
-- [Feature] User registration backend
-- [Feature] User login backend
-- [Feature] User logout backend
+- [Feature] User registration backend (form, view, url)
+- [Feature] User login backend (xform, view, url)
+- [Feature] User logout backend (form, view, url)
 - [Feature] User registration frontend without styles
 - [Feature] User login frontend without styles
 - [Feature] User logout frontend without styles
