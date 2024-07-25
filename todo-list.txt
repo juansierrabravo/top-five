@@ -1,6 +1,12 @@
 - [Study] Check how the is_active field work
-- [Study] Learn about gettext_lazy translations
+- [Study] gettext_lazy translations
+- [Study] Groups and permissions
 - [Improve] Enhance the readme introduction
 - [Test] Basic model methods like __str__
 - [Test] Base user model methods like reset password, update user details, etc.
-- [Feature] User registration and login backend
+- [Feature] User registration backend
+- [Feature] User login backend
+- [Feature] User logout backend
+- [Feature] User registration frontend without styles
+- [Feature] User login frontend without styles
+- [Feature] User logout frontend without styles
